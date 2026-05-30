@@ -1,57 +1,27 @@
-# AI Client Discovery Demo
+## AI-Powered Client Discovery Automation
 
-AI-powered client discovery automation demo built using n8n, OpenAI, and Gmail.
+This project demonstrates an end-to-end AI automation workflow using:
+
+- GitHub Pages (Landing Page)
+- n8n Workflow Automation
+- Google Gemini AI
+- Gmail Integration
 
 ## Live Demo
-
 https://annydc.github.io/ai-client-discovery-demo/
 
-## Project Overview
+## Workflow Overview
 
-This project demonstrates an AI-powered client discovery workflow for a fictional IT consulting company, NovaTech Solutions.
+1. User submits form on landing page
+2. Data is sent to n8n webhook
+3. Gemini AI generates personalized consulting email
+4. Gmail sends email to user automatically
 
-A prospective client submits their requirements through a landing page. The submitted information is sent to an automation workflow that uses AI to generate a personalized consultation response email, which is then delivered to the client automatically.
+## Tech Stack
+- HTML + Bootstrap
+- n8n (Automation)
+- Google Gemini AI
+- Gmail API
 
-## Features
-
-* Responsive Bootstrap 5 landing page
-* Client discovery form
-* AI-generated personalized consultation email
-* Automated email delivery using Gmail
-* n8n workflow automation
-* GitHub Pages deployment
-
-## Technology Stack
-
-* HTML5
-* Bootstrap 5
-* JavaScript
-* n8n
-* OpenAI API
-* Gmail
-
-## Workflow
-
-Client submits form
-↓
-n8n Webhook
-↓
-OpenAI
-↓
-Generate personalized response
-↓
-Gmail
-↓
-Email delivered to client
-
-## Production Enhancements
-
-If this solution were deployed to production, the following improvements would be added:
-
-1. CRM Integration (HubSpot or Salesforce)
-2. Automated Meeting Scheduling with Google Calendar
-3. Lead Tracking, Analytics, and Qualification Scoring
-
-## Author
-
-AI Automation Training Project
+## Workflow File
+Located in `/workflow/novatech-ai-discovery.json`

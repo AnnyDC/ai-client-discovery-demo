@@ -1,0 +1,209 @@
+{
+  "name": "NovaTech Client Discovery",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "novatech-discovery",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -80,
+        -48
+      ],
+      "id": "f5bdd0d0-e57a-4cfc-a225-5bdb58d7e18f",
+      "name": "Webhook",
+      "webhookId": "725cf0d1-cbac-43a9-bd54-45b8f5072d2e"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a senior IT consulting advisor at NovaTech Solutions.\n\nA prospective client has submitted an enquiry through our website.\n\nClient Details:\n\nName: {{ $json.body.fullName }}\n\nCompany: {{ $json.body.companyName }}\n\nIndustry: {{ $json.body.industry }}\n\nCore Challenge: {{ $json.body.coreBusinessChallenge }}\n\nRequested Solution: {{ $json.body.solutionNeeded }}\n\nWrite a personalized consultation email.\n\nRequirements:\n\n- Thank the client for reaching out.\n- Acknowledge the specific challenge they provided.\n- Do not assume or invent business challenges.\n- Do not invent industry details beyond what is provided.\n- Avoid repeating the exact challenge text multiple times.\n- Provide actionable recommendations based on the requested solution type.\n- Suggest 3 practical next steps specifically related to the requested solution type.\n- Invite the client to schedule a discovery call.\n- Use a professional and consultative tone.\n- Maximum 250 words.\n- Return only the email body.",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "="
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        304,
+        -48
+      ],
+      "id": "43ff61f4-902d-4e59-a94e-b1d32167959f",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        144
+      ],
+      "id": "18dcf839-44ef-416f-a558-a91475fb6260",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "R3ZydXvG7F7ZzkDu",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2e88ca05-dce8-4d86-bae4-a61b7a9eabcc",
+              "name": "body.fullName",
+              "value": "={{ $json.body.fullName }}",
+              "type": "string"
+            },
+            {
+              "id": "f7bcc8ce-b12f-4c18-9416-44378f38030b",
+              "name": "body.companyName",
+              "value": "={{ $json.body.companyName }}",
+              "type": "string"
+            },
+            {
+              "id": "77612a24-17a4-4478-a4c6-4fd75f6a2d8d",
+              "name": "body.emailAddress",
+              "value": "={{ $json.body.emailAddress }}",
+              "type": "string"
+            },
+            {
+              "id": "df61546e-0fd1-4237-9323-3435f84c407b",
+              "name": "body.industry",
+              "value": "={{ $json.body.industry }}",
+              "type": "string"
+            },
+            {
+              "id": "85c2336a-f28c-41d9-9d7b-826d4af8ccee",
+              "name": "body.coreBusinessChallenge",
+              "value": "={{ $json.body.coreBusinessChallenge }}",
+              "type": "string"
+            },
+            {
+              "id": "bbca09a6-756b-4ab0-88d6-344a971876af",
+              "name": "body.solutionNeeded",
+              "value": "={{ $json.body.solutionNeeded }}",
+              "type": "string"
+            },
+            {
+              "id": "e354e597-30e0-401e-aa56-84938195d660",
+              "name": "body.submittedAt",
+              "value": "={{ $json.body.submittedAt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        -48
+      ],
+      "id": "105d4844-1121-496e-9546-d620e5461567",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.body.emailAddress }}",
+        "subject": "Your NovaTech Solutions Consultation Request",
+        "emailType": "text",
+        "message": "={{ $('Basic LLM Chain').item.json.text }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        656,
+        -48
+      ],
+      "id": "4bcccc7d-3e57-4baf-8ae5-6f18e65a999d",
+      "name": "Send a message",
+      "webhookId": "5f74b44c-c63e-40d5-a9af-e1f78910cbeb",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "RVNZSKZgQBRRhx8H",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e45773c2-f99f-46ea-8c70-66d19733bae7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fd93c1f4b0c1129455b8e1d8054ba0c6f39769b10ba08c6121b28541d23a7825"
+  },
+  "id": "E9VaiKnPYIc2fC5U",
+  "tags": []
+}
